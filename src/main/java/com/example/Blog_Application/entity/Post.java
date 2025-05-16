@@ -6,7 +6,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
+import java.util.*;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -33,4 +33,7 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "user_id")
     User user;
+
+    @OneToMany(mappedBy = "post",cascade = CascadeType.ALL)
+    List<Comment> comments = new ArrayList<>();
 }

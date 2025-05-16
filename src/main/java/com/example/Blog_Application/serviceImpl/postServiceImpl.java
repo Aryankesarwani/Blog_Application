@@ -1,6 +1,7 @@
 package com.example.Blog_Application.serviceImpl;
 
 import com.example.Blog_Application.DTO.PostDto;
+import com.example.Blog_Application.DTO.PostResponse;
 import com.example.Blog_Application.Exception.UserNotFoundException;
 import com.example.Blog_Application.Repo.CategoryRepo;
 import com.example.Blog_Application.Repo.PostRepo;
@@ -11,12 +12,17 @@ import com.example.Blog_Application.entity.User;
 import com.example.Blog_Application.service.PostService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class postServiceImpl implements PostService {
@@ -33,8 +39,9 @@ public class postServiceImpl implements PostService {
     @Override
     public PostDto createPost(PostDto postDto,int user_id,int cat_id) {
         Post post = modelMapper.map(postDto,Post.class);
-        if(postDto.getImageName() == null)post.setImageName("default.png");
+        post.setImageName("default.png");
         post.setDate(new Date());
+        post.setComments(new ArrayList<>());
         post.setUser(userRepo.findById(user_id).orElseThrow(()-> new UserNotFoundException("User Not found id ="+user_id)));
         post.setCategory(categoryRepo.findById(cat_id).orElseThrow(()-> new UserNotFoundException("Category not found id = "+cat_id)));
         Post savedPost = postRepo.save(post);
@@ -43,13 +50,12 @@ public class postServiceImpl implements PostService {
 
 
     @Override
-    public PostDto updatePost(PostDto postDto, int post_Id,int cat_id) {
+    public PostDto updatePost(PostDto postDto, int post_Id) {
         PostDto postDto1 = getPostById(post_Id);
         postDto1.setContent(postDto.getContent());
         postDto1.setTitle(postDto.getTitle());
         postDto1.setImageName(postDto.getImageName());
-//        postDto1.setUser(userRepo.findById(user_id).orElseThrow(()-> new UserNotFoundException("User Not found id ="+user_id)));
-        postDto1.setCategory(categoryRepo.findById(cat_id).orElseThrow(()-> new UserNotFoundException("Category not found id = "+cat_id)));
+//        postDto1.setCategory(categoryRepo.findById(cat_id).orElseThrow(()-> new UserNotFoundException("Category not found id = "+cat_id)));
         Post post = modelMapper.map(postDto1,Post.class);
         post.setDate(new Date());
         Post savedPost = postRepo.save(post);
@@ -66,13 +72,24 @@ public class postServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> getAllPost() {
+    public PostResponse getAllPost(int pageSize, int pageNumber,String sortBy) {
+
+        Pageable pageable = PageRequest.of(pageNumber,pageSize,Sort.by(sortBy).descending());
+
         List<PostDto> postDtos = new ArrayList<>();
-        List<Post> posts = postRepo.findAll();
+        Page<Post> pagePost = postRepo.findAll(pageable);
+        List<Post> posts = pagePost.getContent();
         for(Post post : posts){
             postDtos.add(modelMapper.map(post, PostDto.class));
         }
-        return postDtos;
+        return PostResponse.builder()
+                .content(postDtos)
+                .lastPage(pagePost.isLast())
+                .pageSize(pagePost.getSize())
+                .pageNumber(pagePost.getNumber())
+                .totalElements(pagePost.getNumberOfElements())
+                .totalPages(pagePost.getTotalPages())
+                .build();
     }
 
     @Override
@@ -101,8 +118,9 @@ public class postServiceImpl implements PostService {
     @Override
     public List<PostDto> getByTitleContaining(String key) {
         List<Post> posts = postRepo.findByTitleContaining(key);
-        List<PostDto> postDtos = new ArrayList<>();
-        for(Post post : posts) postDtos.add(modelMapper.map(post,PostDto.class));
-        return postDtos;
+//        List<PostDto> postDtos = new ArrayList<>();
+//        for(Post post : posts) postDtos.add(modelMapper.map(post,PostDto.class));
+//        return postDtos;
+        return posts.stream().map((post)-> modelMapper.map(post,PostDto.class)).collect(Collectors.toList());
     }
 }
