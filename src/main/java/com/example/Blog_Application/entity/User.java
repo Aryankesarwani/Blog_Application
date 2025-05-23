@@ -21,6 +21,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
     String name;
+    @Column(unique = true)
     String email;
     String password;
     String about;
@@ -31,5 +32,6 @@ public class User {
     List<Post> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @JsonIgnore
     List<Comment> comments = new ArrayList<>();
 }

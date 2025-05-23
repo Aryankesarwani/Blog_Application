@@ -17,9 +17,14 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @PostMapping("/create")
+    @PostMapping("/register")
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto){
         return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
+    }
+    @PostMapping("/login")
+    public String login(@RequestBody UserDto userDto){
+        System.out.println("assess of login");
+        return userService.varify(userDto);
     }
     @PutMapping("/update/{user_id}")
     public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto,@PathVariable int user_id){

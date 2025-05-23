@@ -16,4 +16,6 @@ public interface UserService {
     void deleteUser(Integer user_Id) throws UserNotFoundException;
 
     User getuserByName(String userName);
+
+    String varify(UserDto userDto);
 }

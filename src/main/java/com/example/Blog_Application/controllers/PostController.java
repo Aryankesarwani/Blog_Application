@@ -40,6 +40,10 @@ public class PostController {
 
     @Autowired
     CategoryRepo categoryRepo;
+    private Integer pageSize;
+    private Integer pageNumber;
+    private String sortBy;
+
     @PostMapping("/create")
     public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto,@RequestParam int user_id,@RequestParam int cat_id){
         return new ResponseEntity<>(postService.createPost(postDto,user_id,cat_id), HttpStatus.CREATED);
@@ -51,9 +55,12 @@ public class PostController {
         return new ResponseEntity<PostDto>(UpdatedPost, OK);
     }
     @GetMapping("/getAll")
-    public ResponseEntity<PostResponse> getAllPost(@RequestParam(value = "pageSize",defaultValue = AppConstants.PAGE_SIZE,required = false)Integer pageSize,
-                                                   @RequestParam(value = "pageNumber",defaultValue = AppConstants.PAGE_NUMBER,required = false) Integer pageNumber,
+    public ResponseEntity<PostResponse> getAllPost(@RequestParam(value = "pageSize",defaultValue =AppConstants.PAGE_SIZE,required = false)Integer pageSize,
+                                                   @RequestParam(value = "pageNumber",defaultValue =AppConstants.PAGE_NUMBER,required = false) Integer pageNumber,
                                                    @RequestParam(value = "sortBy",defaultValue = AppConstants.SORT_BY,required = false) String sortBy){
+        this.pageSize = pageSize;
+        this.pageNumber = pageNumber;
+        this.sortBy = sortBy;
         return new ResponseEntity<>(postService.getAllPost(pageSize,pageNumber,sortBy), OK);
     }
 

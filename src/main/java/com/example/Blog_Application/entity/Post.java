@@ -1,5 +1,6 @@
 package com.example.Blog_Application.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
@@ -26,7 +27,7 @@ public class Post {
     Date date;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "category_id")
     Category category;
 
 
@@ -35,5 +36,6 @@ public class Post {
     User user;
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL)
+    @JsonIgnore
     List<Comment> comments = new ArrayList<>();
 }

@@ -1,12 +1,19 @@
 package com.example.Blog_Application.serviceImpl;
 
+import com.example.Blog_Application.Exception.ResourceAlreadyExistException;
 import com.example.Blog_Application.Exception.UserNotFoundException;
 import com.example.Blog_Application.Repo.UserRepo;
 import com.example.Blog_Application.Transformer.UserTransformer;
 import com.example.Blog_Application.entity.User;
+import com.example.Blog_Application.service.JwtService;
 import com.example.Blog_Application.service.UserService;
 import com.example.Blog_Application.DTO.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,12 +27,19 @@ public class UserServiceImpl implements UserService {
     UserRepo userRepo;
     @Autowired
     UserTransformer userTransformer;
+    @Autowired
+    AuthenticationManager authManager;
+    @Autowired
+    JwtService jwtService;
 
+    private BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder(12);
 
 
     @Override
     public UserDto createUser(UserDto userdto) {
+        if(userRepo.findByEmail(userdto.getEmail())!=null) throw new ResourceAlreadyExistException("Email Already Exist...");
         User user = userTransformer.DtoToEntity(userdto);
+        user.setPassword(bcpe.encode(user.getPassword()));
         User saveduser = userRepo.save(user);
         return userTransformer.EntityToDto(saveduser);
     }
@@ -79,5 +93,13 @@ public class UserServiceImpl implements UserService {
     public User getuserByName(String userName) {
         User user = userRepo.findByName(userName);
         return user;
+    }
+
+    @Override
+    public String varify(UserDto userDto) {
+
+        Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(userDto.getName(),userDto.getPassword()));
+        if (authentication.isAuthenticated()) return jwtService.generateToken(userDto.getName());
+        return "fail";
     }
 }
