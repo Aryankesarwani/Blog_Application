@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,14 +19,15 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto){
-        return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
+    public ResponseEntity<UserDto> registerUser(@Valid @RequestBody UserDto userDto){
+        return new ResponseEntity<>(userService.registerUser(userDto), HttpStatus.CREATED);
     }
     @PostMapping("/login")
     public String login(@RequestBody UserDto userDto){
-        System.out.println("assess of login");
+//        System.out.println("assess of login");
         return userService.varify(userDto);
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/update/{user_id}")
     public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto,@PathVariable int user_id){
         return new ResponseEntity<>(userService.updateUser(userDto,user_id), HttpStatus.ACCEPTED);
@@ -38,6 +40,7 @@ public class UserController {
     public ResponseEntity<List<UserDto>> getAllUser(){
         return new ResponseEntity<>(userService.getAllUsers(),HttpStatus.ACCEPTED);
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteUser(@RequestParam int id){
         try {

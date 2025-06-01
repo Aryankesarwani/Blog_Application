@@ -9,7 +9,8 @@ import java.util.List;
 
 @Service
 public interface UserService {
-    UserDto createUser(UserDto user);
+
+    UserDto registerUser(UserDto user);
     UserDto updateUser(UserDto userDto,Integer user_ID) throws UserNotFoundException;
     UserDto getuserById(Integer user_Id) throws UserNotFoundException;
     List<UserDto> getAllUsers();

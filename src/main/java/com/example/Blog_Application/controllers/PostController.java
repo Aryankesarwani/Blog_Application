@@ -68,6 +68,10 @@ public class PostController {
     public ResponseEntity<List<PostDto>> getAllByUser(@RequestParam String userName){
         return new ResponseEntity<>(postService.getAllByUser(userName), OK);
     }
+    @GetMapping("/get")
+    public ResponseEntity<List<PostDto>> getAll(){
+        return new ResponseEntity<>(postService.getAll(),OK);
+    }
 
     @GetMapping("/getAllByCategory")
     public ResponseEntity<List<PostDto>> getAllByCategory(@RequestParam String categoryName){

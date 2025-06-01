@@ -19,4 +19,6 @@ public interface PostService {
     List<PostDto> getAllByCategory(String categoryName);
 
     List<PostDto> getByTitleContaining(String key);
+
+    List<PostDto> getAll();
 }

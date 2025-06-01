@@ -7,7 +7,9 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -34,4 +36,10 @@ public class User {
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     @JsonIgnore
     List<Comment> comments = new ArrayList<>();
+
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role",
+    joinColumns = @JoinColumn(name = "users",referencedColumnName = "id"),
+    inverseJoinColumns = @JoinColumn(name = "role",referencedColumnName = "id"))
+    Set<Role> roles = new HashSet<>();
 }
