@@ -2,6 +2,7 @@ package com.example.Blog_Application.service;
 
 import com.example.Blog_Application.Exception.UserNotFoundException;
 import com.example.Blog_Application.DTO.UserDto;
+import com.example.Blog_Application.DTO.UserCredentials;
 import com.example.Blog_Application.entity.User;
 import org.springframework.stereotype.Service;
 
@@ -18,5 +19,5 @@ public interface UserService {
 
     User getuserByName(String userName);
 
-    String varify(UserDto userDto);
+    String varify(UserCredentials usercredentials);
 }

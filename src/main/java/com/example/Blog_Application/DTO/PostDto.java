@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PostDto {
-    int id;
+//    int id;
     String title;
     String content;
     String imageName;

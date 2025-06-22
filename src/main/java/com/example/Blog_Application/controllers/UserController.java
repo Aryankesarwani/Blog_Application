@@ -2,6 +2,7 @@ package com.example.Blog_Application.controllers;
 
 import com.example.Blog_Application.Exception.UserNotFoundException;
 import com.example.Blog_Application.service.UserService;
+import com.example.Blog_Application.DTO.UserCredentials;
 import com.example.Blog_Application.DTO.UserDto;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,9 @@ public class UserController {
         return new ResponseEntity<>(userService.registerUser(userDto), HttpStatus.CREATED);
     }
     @PostMapping("/login")
-    public String login(@RequestBody UserDto userDto){
+    public String login(@RequestBody UserCredentials usercredentials){
 //        System.out.println("assess of login");
-        return userService.varify(userDto);
+        return userService.varify(usercredentials);
     }
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/update/{user_id}")

@@ -5,6 +5,7 @@ import com.example.Blog_Application.Exception.UserNotFoundException;
 import com.example.Blog_Application.Repo.RoleRepo;
 import com.example.Blog_Application.Repo.UserRepo;
 import com.example.Blog_Application.Transformer.UserTransformer;
+import com.example.Blog_Application.DTO.UserCredentials;
 import com.example.Blog_Application.config.AppConstants;
 import com.example.Blog_Application.entity.Role;
 import com.example.Blog_Application.entity.User;
@@ -105,7 +106,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String varify(UserDto userDto) {
+    public String varify(UserCredentials userDto) {
 
         Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(userDto.getEmail(),userDto.getPassword()));
         if (authentication.isAuthenticated()) return jwtService.generateToken(userDto.getEmail());
